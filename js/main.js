@@ -1,216 +1,229 @@
-// Change open and close exercises
-const buttons = document.querySelectorAll('.nav button');
-buttons[0].children[0].innerHTML = '📖';
-buttons.forEach((item, idx) => {
-	item.addEventListener('click', e => {
-		item.children[0].innerHTML = '📖';
-		buttons.forEach((res, index) => {
-			if (idx !== index) {
-				res.children[0].innerHTML = '📒';
-			}
-		});
-	});
-});
-// Event onchange enable input feild
-function enableSelected() {
-	const value = document.getElementById('formSelectedCustomer').value;
-	if (value === 'product') {
-		document.getElementById('channels').innerHTML = `
-    <div class="form-group">
-      <div class="text-field">
-        <label for="connectNumb">Số kết nối</label>
-        <input
-          autocomplete="off"
-          type="number"
-          id="connectNumb"
-          placeholder="Nhập số kết nối"
-        />
-      </div>
-    </div>
-  `;
-	}
-}
-// Exercises 1:
-function totalScore(score1, score2, score3) {
-	if (score1 > 10 || score2 > 10 || score3 > 10) {
-		Swal.fire({
-			position: 'center',
-			icon: 'error',
-			title: 'Điểm không hợp lệ',
-			showConfirmButton: false,
-			timer: 1500,
-		});
-		setTimeout(() => {
-			document.getElementById('formCalcScore').reset();
-		}, 1500);
-		return '';
-	}
-	return score1 + score2 + score3;
-}
-document.getElementById('btnCalcScrore').addEventListener('click', e => {
-	e.preventDefault();
-	const score1 = +document.getElementById('subScore1').value;
-	const score2 = +document.getElementById('subScore2').value;
-	const score3 = +document.getElementById('subScore3').value;
-	const selectedArea = +document.getElementById('formSelectedArea').value;
-	const selectedObj = +document.getElementById('formSelectedObj').value;
-	const benchmark = +document.getElementById('benchmark').value;
-	const result = document.querySelector('.showScore');
-	let value;
-	if (score1 <= 0 || score2 <= 0 || score3 <= 0) {
-		result.innerHTML = `Bạn đã rớt. Do có điểm nhỏ hơn hoặc bằng 0`;
-	} else {
-		if (selectedArea === 0 && selectedObj !== 0) {
-			value = totalScore(score1, score2, score3) + selectedObj;
-		} else if (selectedArea !== 0 && selectedObj === 0) {
-			value = totalScore(score1, score2, score3) + selectedArea;
-		} else if (selectedArea !== 0 && selectedObj !== 0) {
-			value = totalScore(score1, score2, score3) + selectedArea + selectedObj;
-		} else {
-			value = totalScore(score1, score2, score3);
-		}
-		if (value >= benchmark) {
-			result.innerHTML = `Bạn đã đậu. Tổng điểm là: ${value}`;
-		} else {
-			result.innerHTML = `Bạn đã rớt. Tổng điểm là: ${value}`;
-		}
-	}
-	setTimeout(() => {
-		document.getElementById('formCalcScore').reset();
-		result.innerHTML = '';
-	}, 7000);
-});
-// Exercise 2:
-function calcPriceElectric(numb) {
-	let total;
-	if (numb <= 50) {
-		total = numb * 500;
-	} else if (numb <= 100) {
-		total = 25000 + (numb - 50) * 650;
-	} else if (numb <= 200) {
-		total = 57500 + (numb - 100) * 850;
-	} else if (numb <= 350) {
-		total = 142500 + (numb - 200) * 1100;
-	} else {
-		total = 307500 + (numb - 350) * 1300;
-	}
-	return total;
-}
-document.getElementById('btnCalcPrice').addEventListener('click', e => {
-	e.preventDefault();
-	const name = document.getElementById('fullName').value;
-	const soKW = +document.getElementById('numbKw').value;
-	const result = document.querySelector('.showPriceElectric');
-	if (soKW < 0) {
-		Swal.fire({
-			position: 'center',
-			icon: 'error',
-			title: 'Số Kw không hợp lệ',
-			showConfirmButton: false,
-			timer: 1500,
-		});
-		setTimeout(() => {
-			document.getElementById('formCalcPrice').reset();
-		}, 1500);
-		return '';
-	}
-	const value = calcPriceElectric(soKW);
-	result.innerHTML = `Họ tên : ${name} - Tiền diện: ${value.toLocaleString(
-		'it-IT',
-		{ style: 'currency', currency: 'VND' },
-	)}`;
-	setTimeout(() => {
-		document.getElementById('formCalcPrice').reset();
-		result.innerHTML = '';
-	}, 7000);
-});
-// Exercise 3:
-function calcTax(totalMoney, amount) {
-	let total;
-	if (totalMoney <= 60000000) {
-		total = ((totalMoney - 4000000 - amount * 1600000) * 5) / 100;
-	} else if (totalMoney <= 120000000) {
-		total = ((totalMoney - 4000000 - amount * 1600000) * 10) / 100;
-	} else if (totalMoney <= 210000000) {
-		total = ((totalMoney - 4000000 - amount * 1600000) * 15) / 100;
-	} else if (totalMoney <= 384000000) {
-		total = ((totalMoney - 4000000 - amount * 1600000) * 20) / 100;
-	} else if (totalMoney <= 624000000) {
-		total = ((totalMoney - 4000000 - amount * 1600000) * 25) / 100;
-	} else if (totalMoney <= 960000000) {
-		total = ((totalMoney - 4000000 - amount * 1600000) * 30) / 100;
-	} else {
-		total = ((totalMoney - 4000000 - amount * 1600000) * 35) / 100;
-	}
-	return total.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
-}
-document.getElementById('btnCalcTax').addEventListener('click', e => {
-	e.preventDefault();
-	const nameCus = document.getElementById('customerName').value;
-	const money = +document.getElementById('totalPrice').value;
-	const txtSl = +document.getElementById('amountPerson').value;
-	const result = document.querySelector('.showTax');
-	if (money < 0 || txtSl < 0) {
-		Swal.fire({
-			position: 'center',
-			icon: 'error',
-			title: 'Thông tin nhập vào không hợp lệ',
-			showConfirmButton: false,
-			timer: 1500,
-		});
-		setTimeout(() => {
-			document.getElementById('formCalcTax').reset();
-		}, 1500);
-		return '';
-	}
-	const value = calcTax(money, txtSl);
-	result.innerHTML = `Họ tên : ${nameCus} - Tiền thuế thu nhập cá nhân: ${value}`;
-	setTimeout(() => {
-		document.getElementById('formCalcTax').reset();
-		result.innerHTML = '';
-	}, 7000);
-});
-// Exercise 4:
+//đây là mảng chính sẽ sử dụng xuyên suốt bài
+var arr = [];
+document.getElementById("btnThemSo").onclick = function () {
+  var mangGT = document.getElementById("mangGT").value;
 
-function calcCable(chanelVip, amountCon, selectedValue) {
-	let total;
-	if (selectedValue === 'person') {
-		total = 4.5 + 20.5 + chanelVip * 7.5;
-	} else if (selectedValue === 'product') {
-		if (amountCon <= 10) {
-			total = 15 + chanelVip * 50 + 75;
-		} else {
-			total = 15 + chanelVip * 50 + 75 + (amountCon - 10) * 5;
-		}
-	} else {
-		Swal.fire({
-			position: 'center',
-			icon: 'error',
-			title: 'Vui lòng chọn loại khách hàng',
-			showConfirmButton: false,
-			timer: 1500,
-		});
-		return 0;
-	}
-	return total.toLocaleString('en-US', {
-		style: 'currency',
-		currency: 'USD',
-	});
+    //add số mới vào chuỗi đầu bài
+    arr.push(Number(mangGT));
+
+    document.getElementById("ketQuaMang").innerHTML = arr.join(", ");
+
+    // document.getElementById("mangGT").value = "";
+};
+
+// BT1
+//button tổng
+document.getElementById("btnKetQua1").onclick = function () {
+  //input: lấy giá trị number từ mảng arr 
+  var result1 = 0;
+  //xử lý
+  for (var j = 0; j < arr.length; j++) {
+    if (arr[j] >= 0) {
+      result1 += arr[j];
+    } 
+  }
+
+  //output: trả ra result là tổng các số dương
+  document.getElementById("result1").innerHTML = "Tổng số dương: " + result1;
+};
+
+// BT2
+document.getElementById("btnKetQua2").addEventListener("click", function () {
+
+//input:  duyệt mảng arr
+var count2 = 0;
+//progress
+for (var i = 0; i < arr.length; i++) {
+  if(arr[i] >= 0) {
+  count2 ++;
+  } 
 }
-document.getElementById('btnCalcCable').addEventListener('click', e => {
-	e.preventDefault();
-	const valueSelect = document.getElementById('formSelectedCustomer').value;
-	const pass = document.getElementById('pass').value;
-	const amountVip = +document.getElementById('premiumNumb').value;
-	const result = document.querySelector('.showPriceCable');
-	let value = calcCable(amountVip, 0, valueSelect);
-	if (document.getElementById('channels').childNodes.length > 0) {
-		const amountConnect = +document.getElementById('connectNumb').value;
-		value = calcCable(amountVip, amountConnect, valueSelect);
+//output: result2 là kết quả đếm được có bao nhiêu số dương
+var result2 = "Số dương: " + count2;
+document.getElementById("result2").innerHTML = result2;
+})
+
+// BT3
+document.getElementById("btnKetQua3").addEventListener("click", function () {
+
+  //input:  duyệt mảng arr
+  var min3 = arr[0];
+  var index3 = 0;
+  //progress
+  for (var i = 1; i < arr.length; i++) {
+    if(arr[i] < min3) {
+    min3 = arr[i];
+    index3 = i;
+    } 
+    }
+    //output: result3 là kết quả số nhỏ nhất
+    var result3= "Số nhỏ nhất: " + min3;
+
+  document.querySelector("#result3").innerHTML = result3;
+  })
+
+// BT4
+document.getElementById("btnKetQua4").addEventListener("click", function () {
+
+  //input:  duyệt mảng arr
+  var min4 = arr[0];
+  var index4 = 0;
+  //progress
+  for (var i = 1; i < arr.length; i++) {
+    if(arr[i] < min4 && arr[i] > 0) {
+    min4 = arr[i];
+    index4 = i;
+    } 
+    }
+    //output: result4 là kết quả số dương nhỏ nhất
+    var result4= "Số dương nhỏ nhất: " + min4;
+
+  document.querySelector("#result4").innerHTML = result4;
+  })
+
+// BT5
+document.getElementById("btnKetQua5").addEventListener("click", function () {
+
+  //input:  duyệt mảng arr
+  /**Duyệt mảng arr >> có số chẵn
+   * tạo mảng mới >>push các số chẵn này vào
+   * lấy phần tử cuối của mảng mới
+   * trả ra kết quả
+   */
+  var newArr5 = [];
+  var newEven5 = 0;
+      //progress
+  for (var i = 0; i < arr.length; i++) {
+    if(arr[i] % 2 === 0) 
+    {
+    newArr5.push(arr[i]);
+    } 
+    }
+  newEven5 = newArr5.pop();
+    //output: result5 là kết quả số chẵn cuối cùng
+  var result5= "Số chẵn cuối cùng: " + newEven5;
+
+  document.querySelector("#result5").innerHTML = result5;
+  })
+
+// BT6
+document.getElementById("btnKetQua6").addEventListener("click", function () {
+
+	//input:  duyệt mảng arr
+	//ouput: mảng newArr6 chứa phần tử được hoán vị
+	//progress
+	for (var i = 0; i < arr.length - 1; i++) {
+
+		for (var j = i + 1; j < arr.length; j++) {
+
+		  if (arr[i] > arr[j]) {
+			//hoán vị
+			var temp = arr[i];
+			arr[i] = arr[j];
+			arr[j] = temp;
+		  }
+
+		}
+	};
+	var result6= "Mảng sau khi đổi: " + arr;
+  
+	document.querySelector("#result6").innerHTML = result6;
+	})
+
+  // BT7
+  document.getElementById("btnKetQua7").addEventListener("click", function () {
+
+    //input: giá trị mảng arr
+    //output: result7 là kết quả số chẵn cuối cùng
+    //progress
+        
+    var result7 = arr.sort(function(a, b){return a - b});
+
+    document.querySelector("#result7").innerHTML = "Mảng sau khi sắp xếp: " + result7;
+    })
+
+// BT8
+document.getElementById("btnKetQua8").addEventListener("click", function () {
+
+    //input: giá trị mảng arr
+    //output: result8 là kết quả số nguyên tố đầu tiên
+	var result8 = "";
+    //progress: 
+	// kiểm tra SNT >> nếu check có chia hết cho 2 hoặc căn bậc hai của số đó >> không phải là SNT
+	var checkSNT = true;
+
+	var n = 2;
+
+	for (var i = 0; i < arr.length; i++) {
+
+	if(n <= Math.sqrt(arr[i]) && arr[i]%n === 0) {
+        checkSNT = false;
 	}
-	result.innerHTML = `Mã khách hàng : ${pass} - Tiền cáp: ${value}`;
-	setTimeout(() => {
-		document.getElementById('formCalcPriceCable').reset();
-		result.innerHTML = '';
-	}, 7000);
-});
+	}	
+
+	if (checkSNT = true) {
+		result8 = n + "là số nguyên tố"
+	} else {
+		result8 = n + "không phải là số nguyên tố"
+	}
+	//ouput
+    document.querySelector("#result8").innerHTML = result8;
+    })
+
+ 
+// BT9
+//nhập giá trị mảng mới
+var arr2 = [];
+document.getElementById("btnThemSo2").onclick = function () {
+  var mangGT2 = document.getElementById("mangGT2").value;
+
+//push giá trị vào mảng mới
+    arr2.push(Number(mangGT2));
+
+    document.getElementById("showGT2").innerHTML = arr2.join(", ");
+};
+
+//tính toán
+document.getElementById("btnKetQua9").addEventListener("click", function () {
+
+ //input: giá trị mảng mới arr2
+ //output: result9 là kết quả số nguyên đếm được
+ //progress
+
+	var newArr2 = [];
+	for (var i = 0; i < arr2.length; i++) {
+		if(Number.isInteger(Number(arr2[i]))) {
+			newArr2.push(arr2[i]);
+		}
+	}
+
+    document.querySelector("#result9").innerHTML = "Số nguyên: " + newArr2.length;
+    })
+
+// BT10
+document.getElementById("btnKetQua10").addEventListener("click", function () {
+
+    //input: giá trị mảng arr
+    //output: result10 là kết quả  so sánh giữa số lượng số âm và số dương 
+    //progress
+        
+    var countSoAm = 0;
+	var countSoDuong = 0;
+
+	for (var i = 0; i < arr.length; i++) {
+		if(arr[i] < 0) {
+		countSoAm ++;
+		
+		} else if (arr[i] > 0) {
+		countSoDuong ++;
+		}};
+
+		if (countSoAm > countSoDuong) {
+		document.querySelector("#result10").innerHTML = "Mảng sau nhiều số âm hơn";
+	} else if (countSoDuong > countSoAm) {
+		document.querySelector("#result10").innerHTML = "Mảng sau nhiều số dương hơn";
+	} else if (countSoAm = countSoDuong) {
+		document.querySelector("#result10").innerHTML = "Số lượng số âm và số dương trong mảng bằng nhau";
+	}
+    
+    })
